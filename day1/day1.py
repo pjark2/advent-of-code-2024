@@ -2,7 +2,6 @@
 
 import sys
 import re
-from tqdm import tqdm
 
 def get_numbers_from_line(line):
     numbers_strings = re.findall(r"\d+", line)
