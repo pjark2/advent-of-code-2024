@@ -35,17 +35,37 @@ def get_reports_from_data(data):
         reports.append(numbers)
     return reports
 
+def is_safe(report):
+    if are_all_increasing(report) or are_all_decreasing(report):
+        if adjacent_difference_ok(report):
+            return True
+    return False
+
 def determine_safe(reports):
     number_safe = 0
+    unsafe_reports = list()
     for report in reports:
-        if are_all_increasing(report) or are_all_decreasing(report):
-            if adjacent_difference_ok(report):
-                number_safe += 1
-    return number_safe
+        if is_safe(report):
+            number_safe += 1
+        else:
+            unsafe_reports.append(report)
+    return number_safe, unsafe_reports
+
+def problem_dampener(unsafe_reports):
+    number_dampened = 0
+    for report in unsafe_reports:
+        for index in range(len(report)):
+            report_dampened = report[:index] + report[(index+1):]
+            if is_safe(report_dampened):
+                number_dampened += 1
+                break
+    return number_dampened
 
 with open(sys.argv[1], "r") as f:
     data = f.read().splitlines()
 
 reports = get_reports_from_data(data)
-number_of_safe_reports = determine_safe(reports)
+number_of_safe_reports, unsafe_reports = determine_safe(reports)
 print("Part 1: %d" % number_of_safe_reports)
+number_dampened = problem_dampener(unsafe_reports)
+print("Part 2: %d" % (number_of_safe_reports + number_dampened))
